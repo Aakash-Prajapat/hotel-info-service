@@ -14,7 +14,7 @@ public class ApiError {
 	private LocalDateTime timestamp;
 	private String message;
 	private String details;
-	private List<?> subErrors;
+	private List<FieldError> subErrors;
 
 	private ApiError() {
 		timestamp = LocalDateTime.now();
@@ -39,12 +39,12 @@ public class ApiError {
 		this.details = ex.getLocalizedMessage();
 	}
 
-	public ApiError(HttpStatus status, String message, String details, List<?> subErrors) {
+	public ApiError(HttpStatus status, String message, String details, List<FieldError> list) {
 		this();
 		this.status = status;
 		this.message = message;
 		this.details = details;
-		this.subErrors = subErrors;
+		this.subErrors = list;
 	}
 
 	public ApiError(HttpStatus status, String message, String details) {
@@ -93,11 +93,11 @@ public class ApiError {
 		this.details = details;
 	}
 
-	public List<?> getSubErrors() {
+	public List<FieldError> getSubErrors() {
 		return subErrors;
 	}
 
-	public void setSubErrors(List<String> subErrors) {
+	public void setSubErrors(List<FieldError> subErrors) {
 		this.subErrors = subErrors;
 	}
 }

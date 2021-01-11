@@ -1,12 +1,15 @@
 package com.epam.incubation.service.hotelinfo.datamodel;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.epam.incubation.service.hotelinfo.entity.Hotel;
+
 public class HotelDataModel {
-	
+
 	@NotBlank(message = "Hotel Name is mandatory")
 	private String hotelName;
 	@NotBlank(message = "Hotel Description is mandatory")
@@ -30,21 +33,30 @@ public class HotelDataModel {
 	@NotNull(message = "Rating is mandatory")
 	private int rating;
 
-	public HotelDataModel(String hotelName, String hotelDescription, String propertyNumber, String street, String city,
-			String state, long zipcode, String country, Collection<AmenityDataModel> amenities,
-			Collection<RoomDataModel> rooms, Boolean status, int rating) {
-		this.hotelName = hotelName;
-		this.hotelDescription = hotelDescription;
-		this.propertyNumber = propertyNumber;
-		this.street = street;
-		this.city = city;
-		this.state = state;
-		this.zipcode = zipcode;
-		this.country = country;
-		this.amenities = amenities;
-		this.rooms = rooms;
-		this.status = status;
-		this.rating = rating;
+	public HotelDataModel() {
+
+	}
+
+	public HotelDataModel(Hotel hotel) {
+		this.hotelName = hotel.getHotelName();
+		this.hotelDescription = hotel.getHotelDescription();
+		this.propertyNumber = hotel.getAddress().getAddressLine1();
+		this.street = hotel.getAddress().getAddressLine2();
+		this.city = hotel.getAddress().getCity();
+		this.state = hotel.getAddress().getState();
+		this.zipcode = hotel.getAddress().getZipcode();
+		this.country = hotel.getAddress().getCountry();
+		this.amenities = hotel.getAmenities().parallelStream()
+				.map(a -> new AmenityDataModel(a.getAmenityName(), a.getAmenityDescription()))
+				.collect(Collectors.toList());
+		this.rooms = hotel.getRooms().parallelStream()
+				.map(r -> new RoomDataModel(r.getName(), r.getDescription(), r.isStatus(),
+						r.getInventories().parallelStream()
+								.map(i -> new InventoryDataModel(i.getStayDate(), i.getQuantity(), i.getPrice()))
+								.collect(Collectors.toList())))
+				.collect(Collectors.toList());
+		this.status = hotel.getStatus();
+		this.rating = hotel.getRating();
 	}
 
 	public String getHotelName() {
