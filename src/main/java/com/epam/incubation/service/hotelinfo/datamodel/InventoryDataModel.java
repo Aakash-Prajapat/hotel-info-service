@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.epam.incubation.service.hotelinfo.entity.Inventory;
+
 public class InventoryDataModel {
 	@NotBlank(message = "Room stay Date is mandatory")
 	private Date stayDate;
@@ -13,10 +15,14 @@ public class InventoryDataModel {
 	@NotNull(message = "Price is mandatory")
 	private Double price;
 
-	public InventoryDataModel(Date stayDate, int quantity, Double price) {
-		this.stayDate = stayDate;
-		this.quantity = quantity;
-		this.price = price;
+	public InventoryDataModel() {
+
+	}
+
+	public InventoryDataModel(Inventory inventory) {
+		this.stayDate = inventory.getStayDate();
+		this.quantity = inventory.getQuantity();
+		this.price = inventory.getPrice();
 	}
 
 	public Date getStayDate() {

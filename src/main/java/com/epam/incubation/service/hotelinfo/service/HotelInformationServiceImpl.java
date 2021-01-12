@@ -28,14 +28,15 @@ public class HotelInformationServiceImpl implements HotelInformationService {
 
 	}
 
-	public Optional<HotelDataModel> getHotelById(Integer id) {
+	public HotelDataModel getHotelById(Integer id) {
 		Optional<Hotel> hotel = hotelRepository.findById(id);
 		Optional<HotelDataModel> hotelDataModel = Optional.ofNullable(null);
 		if (hotel.isPresent()) {
 			hotelDataModel = Optional.of(convertHotelDomainModelToDataModel(hotel.get()));
-		}
+		} else
+			throw new RecordNotFoundException("Hotel is not present with"+id);
 
-		return hotelDataModel;
+		return hotelDataModel.get();
 	}
 
 	public List<HotelDataModel> findByCity(String city) {
@@ -64,9 +65,7 @@ public class HotelInformationServiceImpl implements HotelInformationService {
 	}
 
 	private List<HotelDataModel> convertHotelDomainModelToDataModel(List<Hotel> hotels, boolean activeHotels) {
-		return activeHotels
-				? hotels.stream().filter(h -> h.getStatus() == Boolean.TRUE).map(HotelDataModel::new)
-						.collect(Collectors.toList())
-				: hotels.stream().map(HotelDataModel::new).collect(Collectors.toList());
+		return activeHotels ? hotels.stream().filter(h -> h.getStatus() == Boolean.TRUE).map(HotelDataModel::new)
+				.collect(Collectors.toList()) : hotels.stream().map(HotelDataModel::new).collect(Collectors.toList());
 	}
 }

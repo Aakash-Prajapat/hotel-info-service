@@ -1,8 +1,11 @@
 package com.epam.incubation.service.hotelinfo.datamodel;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
+
+import com.epam.incubation.service.hotelinfo.entity.Room;
 
 public class RoomDataModel {
 	@NotBlank(message = "Room name is mandatory")
@@ -13,11 +16,15 @@ public class RoomDataModel {
 	private boolean status;
 	private List<InventoryDataModel> inventories;
 
-	public RoomDataModel(String name, String description, boolean status, List<InventoryDataModel> inventories) {
-		this.name = name;
-		this.description = description;
-		this.status = status;
-		this.inventories = inventories;
+	public RoomDataModel() {
+
+	}
+
+	public RoomDataModel(Room room) {
+		this.name = room.getName();
+		this.description = room.getDescription();
+		this.status = room.isStatus();
+		this.inventories = room.getInventories().stream().map(InventoryDataModel::new).collect(Collectors.toList());
 	}
 
 	public String getName() {

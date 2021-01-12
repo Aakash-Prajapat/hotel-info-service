@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import com.epam.incubation.service.hotelinfo.datamodel.ApiError;
+import com.epam.incubation.service.hotelinfo.exception.InventoryNotAvailableException;
 import com.epam.incubation.service.hotelinfo.exception.RecordNotFoundException;
 
 @ControllerAdvice
@@ -30,6 +31,13 @@ public class RestExceptionHandler {
 
 	@ExceptionHandler(RecordNotFoundException.class)
 	protected ResponseEntity<ApiError> handleEntityNotFound(RecordNotFoundException ex) {
+		ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+	
+	@ExceptionHandler(InventoryNotAvailableException.class)
+	protected ResponseEntity<ApiError> handleEntityNotFound(InventoryNotAvailableException ex) {
 		ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
