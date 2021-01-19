@@ -1,5 +1,6 @@
 package com.epam.incubation.service.hotelinfo.resources;
 
+import java.text.ParseException;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -16,11 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.incubation.service.hotelinfo.datamodel.HotelDataModel;
-import com.epam.incubation.service.hotelinfo.datamodel.InventoryRequestModel;
-import com.epam.incubation.service.hotelinfo.datamodel.InventoryResponseModel;
+import com.epam.incubation.service.hotelinfo.datamodel.InventoryDetailsResponseModel;
 import com.epam.incubation.service.hotelinfo.datamodel.RoomDataModel;
+import com.epam.incubation.service.hotelinfo.requestmodel.InventoryRequestModel;
 import com.epam.incubation.service.hotelinfo.service.HotelInformationServiceImpl;
-import com.epam.incubation.service.hotelinfo.service.InventoryService;
 import com.epam.incubation.service.hotelinfo.service.InventoryServiceImpl;
 import com.epam.incubation.service.hotelinfo.service.RoomServiceImpl;
 
@@ -99,21 +99,23 @@ public class HotelInfoResourceImpl implements HotelInfoResource {
 		return roomService.getAllRoomsByHotelId(hotelId);
 	}
 
-	@GetMapping("/hotelInfo/inventoryService")
+	@PostMapping("/hotelInfo/inventoryService")
 	@ApiOperation(value = "Get Inventories based on duration")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved"),
 			@ApiResponse(code = 404, message = "The resource you were trying to reach is not found") })
-	public List<InventoryResponseModel> getInventoryDetails(
-			@ApiParam(value = "Inventory request model to get inventoryDetails", required = true) @Valid @RequestBody InventoryRequestModel model) {
-		return inventoryService.getInventoryDetails(model);
+	public ResponseEntity<InventoryDetailsResponseModel> getInventoryDetails(
+			@ApiParam(value = "Inventory request model to get inventoryDetails", required = true) @Valid @RequestBody InventoryRequestModel model) throws ParseException {
+		InventoryDetailsResponseModel inventoryDetails = inventoryService.getInventoryDetails(model);
+			return new ResponseEntity<InventoryDetailsResponseModel>(inventoryDetails, HttpStatus.OK);
 	}
 
 	@PutMapping("/hotelInfo/inventoryService")
 	@ApiOperation(value = "Update Inventories based on duration")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully update"),
 			@ApiResponse(code = 404, message = "The resource you were trying to reach is not found") })
-	public List<InventoryResponseModel> updateInventory(
-			@ApiParam(value = "Inventory request model to get inventoryDetails", required = true) @Valid @RequestBody InventoryRequestModel model) {
-		return inventoryService.updateInventory(model);
+	public ResponseEntity<InventoryDetailsResponseModel> updateInventory(
+			@ApiParam(value = "Inventory request model to get inventoryDetails", required = true) @Valid @RequestBody InventoryRequestModel model) throws ParseException {
+		InventoryDetailsResponseModel inventoryDetails = inventoryService.updateInventory(model);
+		return new ResponseEntity<InventoryDetailsResponseModel>(inventoryDetails, HttpStatus.OK);
 	}
 }

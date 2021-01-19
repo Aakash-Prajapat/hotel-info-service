@@ -2,6 +2,8 @@ package com.epam.incubation.service.hotelinfo.datamodel;
 
 import javax.validation.constraints.NotBlank;
 
+import com.epam.incubation.service.hotelinfo.entity.Amenity;
+
 public class AmenityDataModel {
 
 	@NotBlank(message = "Amenity name is mandatory")
@@ -9,9 +11,9 @@ public class AmenityDataModel {
 	@NotBlank(message = "Amenity Description is mandatory")
 	private String amenityDescription;
 
-	public AmenityDataModel(String amenityName, String amenityDescription) {
-		this.amenityName = amenityName;
-		this.amenityDescription = amenityDescription;
+	public AmenityDataModel(Amenity amenity) {
+		this.amenityName = amenity.getAmenityName();
+		this.amenityDescription = amenity.getAmenityDescription();
 	}
 
 	public String getAmenityName() {

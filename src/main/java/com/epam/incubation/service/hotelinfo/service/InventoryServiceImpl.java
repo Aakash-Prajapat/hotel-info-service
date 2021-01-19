@@ -1,17 +1,20 @@
 package com.epam.incubation.service.hotelinfo.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.epam.incubation.service.hotelinfo.datamodel.InventoryRequestModel;
+import com.epam.incubation.service.hotelinfo.datamodel.ApiError;
+import com.epam.incubation.service.hotelinfo.datamodel.InventoryDetailsResponseModel;
 import com.epam.incubation.service.hotelinfo.datamodel.InventoryResponseModel;
 import com.epam.incubation.service.hotelinfo.entity.Inventory;
-import com.epam.incubation.service.hotelinfo.exception.InventoryNotAvailableException;
 import com.epam.incubation.service.hotelinfo.repository.InventoryRepository;
+import com.epam.incubation.service.hotelinfo.requestmodel.InventoryRequestModel;
 
 @Service
 public class InventoryServiceImpl implements InventoryService {
@@ -19,29 +22,31 @@ public class InventoryServiceImpl implements InventoryService {
 	@Autowired
 	InventoryRepository inventoryRepository;
 
-	public List<InventoryResponseModel> getInventoryDetails(InventoryRequestModel model) {
-		List<Inventory> inventories = inventoryRepository.getInventoryByDuration(model.getCheckIntDate(),
-				model.getCheckOutDate(), model.getRoomId());
+	public InventoryDetailsResponseModel getInventoryDetails(InventoryRequestModel model) throws ParseException {
+		InventoryDetailsResponseModel inventoryDetails = new InventoryDetailsResponseModel();
+		List<Inventory> inventories = inventoryRepository.getInventoryByDuration(model.getRoomId(), model.getCheckInDate(),
+				model.getCheckOutDate());
 		List<Inventory> unavailable = inventories.parallelStream().filter(i -> i.getQuantity() < 1)
 				.collect(Collectors.toList());
-		if (unavailable.isEmpty()) {
+		if (unavailable.isEmpty() && !inventories.isEmpty()) {
 			List<InventoryResponseModel> inventoriesList = inventories.stream().map(InventoryResponseModel::new)
 					.collect(Collectors.toList());
 			inventoriesList.forEach(i -> {
 				i.setRoomId(model.getRoomId());
 				i.setHotelId(model.getHotelId());
 			});
-			return inventoriesList;
+			inventoryDetails.setResponseModel(inventoriesList);
 		} else {
-			String message = "Inventories are not available for date";
-			String date = unavailable.stream().map(Object::toString).collect(Collectors.joining(","));
-			throw new InventoryNotAvailableException(message + date);
+			ApiError error = new ApiError(HttpStatus.NOT_FOUND, "Inventory not available", "Inventory not available for specified date");
+			inventoryDetails.setError(error);
 		}
+		return inventoryDetails;
 	}
 
-	public List<InventoryResponseModel> updateInventory(InventoryRequestModel model) {
-		List<Inventory> inventories = inventoryRepository.getInventoryByDuration(model.getCheckIntDate(),
-				model.getCheckOutDate(), model.getRoomId());
+	public InventoryDetailsResponseModel updateInventory(InventoryRequestModel model) throws ParseException {
+		InventoryDetailsResponseModel inventoryDetails = new InventoryDetailsResponseModel();
+		List<Inventory> inventories = inventoryRepository.getInventoryByDuration(model.getRoomId(), model.getCheckInDate(),
+				model.getCheckOutDate());
 		List<InventoryResponseModel> inventoriesResponse = new ArrayList<>();
 		if (model.getOperation().equals("Cancel")) {
 			inventoriesResponse = inventories.stream().map(i -> {
@@ -60,6 +65,7 @@ public class InventoryServiceImpl implements InventoryService {
 			i.setHotelId(model.getHotelId());
 		});
 
-		return inventoriesResponse;
+		inventoryDetails.setResponseModel(inventoriesResponse);
+		return inventoryDetails;
 	}
 }

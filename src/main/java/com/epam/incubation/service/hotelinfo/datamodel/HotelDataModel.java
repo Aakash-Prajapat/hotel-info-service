@@ -46,15 +46,8 @@ public class HotelDataModel {
 		this.state = hotel.getAddress().getState();
 		this.zipcode = hotel.getAddress().getZipcode();
 		this.country = hotel.getAddress().getCountry();
-		this.amenities = hotel.getAmenities().parallelStream()
-				.map(a -> new AmenityDataModel(a.getAmenityName(), a.getAmenityDescription()))
-				.collect(Collectors.toList());
-		this.rooms = hotel.getRooms().parallelStream()
-				.map(r -> new RoomDataModel(r.getName(), r.getDescription(), r.isStatus(),
-						r.getInventories().parallelStream()
-								.map(i -> new InventoryDataModel(i.getStayDate(), i.getQuantity(), i.getPrice()))
-								.collect(Collectors.toList())))
-				.collect(Collectors.toList());
+		this.amenities = hotel.getAmenities().parallelStream().map(AmenityDataModel::new).collect(Collectors.toList());
+		this.rooms = hotel.getRooms().parallelStream().map(RoomDataModel::new).collect(Collectors.toList());
 		this.status = hotel.getStatus();
 		this.rating = hotel.getRating();
 	}

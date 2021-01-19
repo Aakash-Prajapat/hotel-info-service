@@ -2,13 +2,16 @@ package com.epam.incubation.service.hotelinfo.repository;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.epam.incubation.service.hotelinfo.entity.Room;
 
 @Repository
-public interface RoomRepository extends CrudRepository<Room, Integer> {
+public interface RoomRepository extends JpaRepository<Room, Integer> {
 
-	public List<Room> getAllRoomsByHotelId(Integer hotelId);
+	@Query("SELECT r FROM Room r where hotel_id = :hotelId")
+	List<Room> getAllRoomsByHotelId(@Param("hotelId") Integer hotelId);
 }

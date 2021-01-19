@@ -1,15 +1,16 @@
 package com.epam.incubation.service.hotelinfo.service;
 
+import java.text.ParseException;
 import java.util.List;
 
-import com.epam.incubation.service.hotelinfo.datamodel.InventoryDataModel;
-import com.epam.incubation.service.hotelinfo.datamodel.InventoryRequestModel;
+import com.epam.incubation.service.hotelinfo.datamodel.InventoryDetailsResponseModel;
 import com.epam.incubation.service.hotelinfo.datamodel.InventoryResponseModel;
+import com.epam.incubation.service.hotelinfo.requestmodel.InventoryRequestModel;
 
 public interface InventoryService {
 
-	public List<InventoryResponseModel> getInventoryDetails(InventoryRequestModel model);
+	public InventoryDetailsResponseModel getInventoryDetails(InventoryRequestModel model) throws ParseException;
 
-	public List<InventoryResponseModel> updateInventory(InventoryRequestModel model);
+	public InventoryDetailsResponseModel updateInventory(InventoryRequestModel model) throws ParseException;
 
 }

@@ -14,6 +14,7 @@ import com.epam.incubation.service.hotelinfo.exception.RecordNotFoundException;
 
 @ControllerAdvice
 public class RestExceptionHandler {
+
 	protected ResponseEntity<ApiError> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
 		String error = "Malformed JSON request";
 		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
@@ -35,7 +36,7 @@ public class RestExceptionHandler {
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
-	
+
 	@ExceptionHandler(InventoryNotAvailableException.class)
 	protected ResponseEntity<ApiError> handleEntityNotFound(InventoryNotAvailableException ex) {
 		ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
@@ -46,8 +47,7 @@ public class RestExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	protected ResponseEntity<ApiError> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
 
-		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, "Validation Error",
-				"Validation Error",
-				ex.getFieldErrors()));
+		return buildResponseEntity(
+				new ApiError(HttpStatus.BAD_REQUEST, "Validation Error", "Validation Error", ex.getFieldErrors()));
 	}
 }
