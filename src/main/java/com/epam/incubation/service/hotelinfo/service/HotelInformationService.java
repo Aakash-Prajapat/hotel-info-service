@@ -3,6 +3,8 @@ package com.epam.incubation.service.hotelinfo.service;
 import java.util.List;
 
 import com.epam.incubation.service.hotelinfo.datamodel.HotelDataModel;
+import com.epam.incubation.service.hotelinfo.response.HotelApiResponse;
+import com.epam.incubation.service.hotelinfo.response.HotelResponse;
 
 public interface HotelInformationService {
 
@@ -10,7 +12,7 @@ public interface HotelInformationService {
 	
 	public HotelDataModel getHotelById(Integer id);
 	
-	public List<HotelDataModel> findByCity(String city);
+	public HotelApiResponse<HotelResponse> findByCity(String city);
 	
 	public HotelDataModel disableHotel(Integer id);
 }

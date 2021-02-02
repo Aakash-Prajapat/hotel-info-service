@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,6 +39,8 @@ import com.epam.incubation.service.hotelinfo.datamodel.InventoryResponseModel;
 import com.epam.incubation.service.hotelinfo.datamodel.RoomDataModel;
 import com.epam.incubation.service.hotelinfo.exception.RecordNotFoundException;
 import com.epam.incubation.service.hotelinfo.requestmodel.InventoryRequestModel;
+import com.epam.incubation.service.hotelinfo.response.HotelApiResponse;
+import com.epam.incubation.service.hotelinfo.response.HotelResponse;
 import com.epam.incubation.service.hotelinfo.service.HotelInformationServiceImpl;
 import com.epam.incubation.service.hotelinfo.service.InventoryServiceImpl;
 import com.epam.incubation.service.hotelinfo.util.JwtUtil;
@@ -95,11 +98,12 @@ class HotelInfoResourceImplTest {
 	@Test
 	void getHotelsByCity_ShouldReturnAllHotels() throws Exception {
 		List<HotelDataModel> hotelDataModel = getMockedHotels("findByCity");
-		given(service.findByCity("Indore")).willReturn(hotelDataModel);
+		HotelResponse hotelResponse = new HotelResponse(hotelDataModel);
+		HotelApiResponse<HotelResponse> response = new HotelApiResponse<HotelResponse>(hotelResponse , HttpStatus.OK, null);
+		given(service.findByCity("Indore")).willReturn(response);
 		mockMvc.perform(MockMvcRequestBuilders.get("/hotelInfo/getByCity/Indore")
 				.with(user("Guest").password("password").roles("GUEST"))).andExpect(status().isOk())
-				.andDo(MockMvcResultHandlers.print()).andExpect(jsonPath("$[0].hotelName").value("Sayaji"))
-				.andExpect(jsonPath("$[1].rooms", hasSize(1)));
+				.andDo(MockMvcResultHandlers.print()).andExpect(jsonPath("data.hotels[0].hotelName").value("Sayaji"));
 	}
 
 	@Test

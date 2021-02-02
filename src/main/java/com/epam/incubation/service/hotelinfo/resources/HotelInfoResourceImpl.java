@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.epam.incubation.service.hotelinfo.datamodel.HotelDataModel;
 import com.epam.incubation.service.hotelinfo.datamodel.InventoryDetailsResponseModel;
 import com.epam.incubation.service.hotelinfo.requestmodel.InventoryRequestModel;
+import com.epam.incubation.service.hotelinfo.response.HotelApiResponse;
+import com.epam.incubation.service.hotelinfo.response.HotelResponse;
 import com.epam.incubation.service.hotelinfo.service.HotelInformationServiceImpl;
 import com.epam.incubation.service.hotelinfo.service.InventoryServiceImpl;
 
@@ -45,7 +47,7 @@ public class HotelInfoResourceImpl implements HotelInfoResource {
 
 	@GetMapping("/getByCity/{name}")
 	@PreAuthorize("hasRole('GUEST')")
-	public List<HotelDataModel> getByCity(@PathVariable(value = "name") String name) {
+	public HotelApiResponse<HotelResponse> getByCity(@PathVariable(value = "name") String name) {
 		logger.info("Calling service to Fetch All hotels by city");
 		return hotelService.findByCity(name);
 	}

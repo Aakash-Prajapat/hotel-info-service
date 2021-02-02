@@ -14,5 +14,4 @@ import com.epam.incubation.service.hotelinfo.entity.Inventory;
 public interface InventoryRepository extends CrudRepository<Inventory, Integer> {
 	@Query(value = "SELECT * FROM Inventory i WHERE room_id = :roomId AND stay_date >= :checkInDate AND stay_date <= :checkOutDate", nativeQuery = true)
 	public List<Inventory> getInventoryByDuration(@Param("roomId") Integer roomId, @Param("checkInDate") Date checkInDate, @Param("checkOutDate") Date checkOutDate);
-
 }

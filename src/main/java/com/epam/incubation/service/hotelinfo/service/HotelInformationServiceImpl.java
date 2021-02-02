@@ -8,12 +8,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.epam.incubation.service.hotelinfo.datamodel.ApiError;
 import com.epam.incubation.service.hotelinfo.datamodel.HotelDataModel;
 import com.epam.incubation.service.hotelinfo.entity.Hotel;
 import com.epam.incubation.service.hotelinfo.exception.RecordNotFoundException;
 import com.epam.incubation.service.hotelinfo.repository.HotelInformationRepository;
+import com.epam.incubation.service.hotelinfo.response.HotelApiResponse;
+import com.epam.incubation.service.hotelinfo.response.HotelResponse;
 
 import brave.sampler.Sampler;
 
@@ -65,13 +69,16 @@ public class HotelInformationServiceImpl implements HotelInformationService {
 	 * @param String city name , City name to fetch all hotels information.
 	 * @return list of HotelDataModel, Holds hotel information.
 	 */
-	public List<HotelDataModel> findByCity(String city) {
+	public HotelApiResponse<HotelResponse> findByCity(String city) {
 		activeHotels = Boolean.TRUE;
+		
 		List<Hotel> hotels = hotelRepository.findByAddressCity(city);
-		if (hotels.isEmpty())
-			throw new RecordNotFoundException("No Hotels found with " + city);
+		if (hotels.isEmpty()) {
+			generateHotelApiResponse(null, HttpStatus.NOT_FOUND, new ApiError(HttpStatus.NOT_FOUND, "Hotels not found with city "+city));
+		}
+		HotelResponse response = new HotelResponse(convertHotelDomainModelToDataModel(hotels, activeHotels));
 
-		return convertHotelDomainModelToDataModel(hotels, activeHotels);
+		return generateHotelApiResponse(response, HttpStatus.OK, null);
 
 	}
 
@@ -105,4 +112,8 @@ public class HotelInformationServiceImpl implements HotelInformationService {
 	public Sampler defaultSampler() {
 		return Sampler.ALWAYS_SAMPLE;
 	}
+	
+	private <T> HotelApiResponse<T> generateHotelApiResponse(T actualData, HttpStatus status, ApiError error) {
+        return new HotelApiResponse(actualData, status, error);
+    }
 }

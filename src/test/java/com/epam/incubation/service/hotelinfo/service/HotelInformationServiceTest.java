@@ -26,6 +26,8 @@ import com.epam.incubation.service.hotelinfo.entity.Inventory;
 import com.epam.incubation.service.hotelinfo.entity.Room;
 import com.epam.incubation.service.hotelinfo.exception.RecordNotFoundException;
 import com.epam.incubation.service.hotelinfo.repository.HotelInformationRepository;
+import com.epam.incubation.service.hotelinfo.response.HotelApiResponse;
+import com.epam.incubation.service.hotelinfo.response.HotelResponse;
 
 @ExtendWith(MockitoExtension.class)
 class HotelInformationServiceTest {
@@ -71,15 +73,8 @@ class HotelInformationServiceTest {
 	void findByCity_ShouldReturnHotels() throws ParseException {
 		List<Hotel> hotel = getMockedHotel("findByCity");
 		given(hotelRepository.findByAddressCity("Indore")).willReturn(hotel);
-		List<HotelDataModel> hotelDataModel = service.findByCity("Indore");
-		assertEquals("Sayaji", hotelDataModel.get(0).getHotelName());
-	}
-	
-	@Test
-	void findByCity_NotFound() throws ParseException {
-		given(hotelRepository.findByAddressCity("Indore")).willReturn(new ArrayList<>());
-		assertThrows(RecordNotFoundException.class, () -> service.findByCity("Indore"));
-		
+		HotelApiResponse<HotelResponse> response = service.findByCity("Indore");
+		assertEquals("Sayaji", response.getData().getHotels().get(0).getHotelName());
 	}
 	
 	@Test

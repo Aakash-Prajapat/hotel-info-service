@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import com.epam.incubation.service.hotelinfo.datamodel.HotelDataModel;
 import com.epam.incubation.service.hotelinfo.datamodel.InventoryDetailsResponseModel;
 import com.epam.incubation.service.hotelinfo.requestmodel.InventoryRequestModel;
+import com.epam.incubation.service.hotelinfo.response.HotelApiResponse;
+import com.epam.incubation.service.hotelinfo.response.HotelResponse;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,7 +53,7 @@ public interface HotelInfoResource {
 	@ApiOperation(value = "Get Hotel Information by City")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved"),
 			@ApiResponse(code = 404, message = "The resource you were trying to reach is not found") })
-	public List<HotelDataModel> getByCity(String name);
+	public HotelApiResponse<HotelResponse> getByCity(String name);
 
 	/**
 	 * Responsible to return the Hotel data.
